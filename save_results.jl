@@ -1,6 +1,5 @@
 using DelimitedFiles, Statistics, ChaoticDynamicalSystemLibrary,
-ReservoirComputing, Colors, JSON
-include("systems.jl")
+    ReservoirComputing, Colors, JSON, mesncd
 
 
 train_len = 7000
@@ -149,10 +148,10 @@ end
 init = cycle_jumps
 train_len = 7000
 path = "results/min_esn/params/"
-param_groups = Dict{String, Vector{String}}()
+param_groups = Dict{String,Vector{String}}()
 for (idx, csystem) in enumerate(chaos_systems)
     system_name = string(csystem)
-    file = path*"esn_params_$init$system_name$train_len.json"
+    file = path * "esn_params_$init$system_name$train_len.json"
     params = JSON.parsefile(file)
     param_key = JSON.json(params)
     if haskey(param_groups, param_key)
@@ -247,7 +246,7 @@ println("Rand success rate: ", rand_success_rate)
 train_len = 7000
 path = "results/esn/params/"
 
-param_groups_esn = Dict{String, Vector{String}}()
+param_groups_esn = Dict{String,Vector{String}}()
 
 for csystem in chaos_systems
     system_name = string(csystem)
@@ -279,24 +278,24 @@ topologies = [
 
 train_len = 7000
 base_path = "results/min_esn/params/"
-reuse_distributions = Dict{String, Dict{Int, Int}}()
+reuse_distributions = Dict{String,Dict{Int,Int}}()
 
 for init in topologies
-    param_groups = Dict{String, Vector{String}}()
-    
+    param_groups = Dict{String,Vector{String}}()
+
     for csystem in chaos_systems
         system_name = string(csystem)
         file = base_path * "esn_params_$init$system_name$train_len.json"
         params = JSON.parsefile(file)
         key_str = JSON.json(params)  # should be just {"reg": val}
-        
+
         if haskey(param_groups, key_str)
             push!(param_groups[key_str], system_name)
         else
             param_groups[key_str] = [system_name]
         end
     end
-    
+
     # Count reuse frequencies
     reuse_counts = countmap(length.(values(param_groups)))
     reuse_distributions[init] = reuse_counts

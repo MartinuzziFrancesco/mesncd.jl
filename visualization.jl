@@ -1,7 +1,6 @@
 using DelimitedFiles, CairoMakie, Statistics, ChaoticDynamicalSystemLibrary,
-ReservoirComputing, Colors, JSON, Random
-include("systems.jl")
-include("theme.jl")
+    ReservoirComputing, Colors, JSON, Random, mesncd
+
 Random.seed!(42)
 
 function blend_colors(c1::RGB, c2::RGB, t::Float64)
@@ -45,9 +44,9 @@ reversed_labels = [init_labels[init] for init in reversed_inits]
 
 base_color = color_palette[1]
 gray_target = RGB(0.85, 0.85, 0.85)
-non_esn_colors = [blend_colors(base_color, gray_target, i/11) for i in 1:10]
+non_esn_colors = [blend_colors(base_color, gray_target, i / 11) for i in 1:10]
 esn_color = color_palette[2]
-color_map = Dict{String, RGB}()
+color_map = Dict{String,RGB}()
 non_esn_inits = filter(init -> init != "esn", reversed_inits)
 for (i, init) in enumerate(reverse(non_esn_inits))
     color_map[init] = non_esn_colors[i]
@@ -90,7 +89,7 @@ ax = Axis(
     #title="Absolute Error",
     #ylabel="Reservoir Init",
     xlabel="SD",
-    yticklabelsvisible = false,
+    yticklabelsvisible=false,
     yticks=(1:length(reversed_labels), reversed_labels)
 )
 #rng = MersenneTwister(14)
@@ -113,10 +112,10 @@ end
 
 for (label, layout) in zip(["(a)", "(b)"], [errfig, stdfig])
     Label(layout[1, 1, TopLeft()], label,
-        fontsize = 36,
-        font = :bold,
-        padding = (10,10,10,10),
-        halign = :left)
+        fontsize=36,
+        font=:bold,
+        padding=(10, 10, 10, 10),
+        halign=:left)
 end
 
 colgap!(mainf, 0)

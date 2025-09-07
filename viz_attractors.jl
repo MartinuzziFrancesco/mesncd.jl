@@ -1,11 +1,7 @@
 using DelimitedFiles, CairoMakie, Statistics, ChaoticDynamicalSystemLibrary,
-ReservoirComputing, Colors, JSON, Random, OrdinaryDiffEq, StatsBase,
-FractalDimensions
-include("systems.jl")
-include("theme.jl")
-include("data.jl")
-include("training.jl")
-include("evaluation.jl")
+    ReservoirComputing, Colors, JSON, Random, OrdinaryDiffEq, StatsBase,
+    FractalDimensions, mesncd
+
 Random.seed!(42)
 
 base_color = color_palette[2]
@@ -40,10 +36,10 @@ add_names = true
 
 fig = Figure(resolution=(1900, 1300))
 
-mainf = fig[1,1] = GridLayout()
-minesn = mainf[1,1] = GridLayout()
-esno = mainf[2,1] = GridLayout()
-esns = mainf[3,1] = GridLayout()
+mainf = fig[1, 1] = GridLayout()
+minesn = mainf[1, 1] = GridLayout()
+esno = mainf[2, 1] = GridLayout()
+esns = mainf[3, 1] = GridLayout()
 #legend = fig[2,1] = GridLayout()
 
 for (idx, csystem) in enumerate(five_systems)
@@ -60,18 +56,18 @@ for (idx, csystem) in enumerate(five_systems)
     dd = compare_corr_dim(test, output)
     println(dd)
     if add_names
-        Box(minesn[1, 1], color = :white, strokewidth = 0,)
+        Box(minesn[1, 1], color=:white, strokewidth=0,)
         Label(minesn[1, 1], "CJ-same",
-            rotation = pi/2,
-            tellheight = false,
-            font = :bold,
+            rotation=pi / 2,
+            tellheight=false,
+            font=:bold,
             fontsize=44,)
-            #color=RGB(0.4, 0.4, 0.4))
+        #color=RGB(0.4, 0.4, 0.4))
     else
         idx -= 1
     end
     ax = LScene(minesn[1, idx+1], scenekw=(show_axis=false,))
-    
+
     #ax = Axis3(minesn[1, idx])
     lines!(ax, test[1, :], test[2, :], test[3, :];
         color=RGB(0.85, 0.85, 0.85), linewidth=4)
@@ -117,11 +113,11 @@ for (idx, csystem) in enumerate(five_systems)
     dd = compare_corr_dim(test, output)
     println(dd)
     if add_names
-        Box(esno[1, 1], color = :white, strokewidth = 0,)
+        Box(esno[1, 1], color=:white, strokewidth=0,)
         Label(esno[1, 1], "ESN-optimal",
-            rotation = pi/2,
-            tellheight = false,
-            font = :bold,
+            rotation=pi / 2,
+            tellheight=false,
+            font=:bold,
             fontsize=44,)
     else
         idx -= 1
@@ -162,11 +158,11 @@ for (idx, csystem) in enumerate(five_systems)
     dd = compare_corr_dim(test, output)
     println(dd)
     if add_names
-        Box(esns[1, 1], color = :white, strokewidth = 0,)
+        Box(esns[1, 1], color=:white, strokewidth=0,)
         Label(esns[1, 1], "ESN-same",
-            rotation = pi/2,
-            tellheight = false,
-            font = :bold,
+            rotation=pi / 2,
+            tellheight=false,
+            font=:bold,
             fontsize=44,)
     else
         idx -= 1
@@ -195,7 +191,7 @@ text!(fig.scene, "(a)";
 text!(fig.scene, "(b)";
     position=Point2f(100, 780), fontsize=36, font=:bold)
 fig
-    text!(fig.scene, "(c)";
+text!(fig.scene, "(c)";
     position=Point2f(100, 350), fontsize=36, font=:bold)
 fig
 #for (label, layout) in zip(["(a)", "(b)", "(c)"], [minesn, esno, esns])

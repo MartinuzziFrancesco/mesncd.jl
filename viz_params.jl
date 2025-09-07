@@ -1,12 +1,6 @@
 using DelimitedFiles, CairoMakie, Statistics, ChaoticDynamicalSystemLibrary,
-ReservoirComputing, Colors, JSON, Random, OrdinaryDiffEq, StatsBase, LaTeXStrings,
-FractalDimensions
-
-include("systems.jl")
-include("theme.jl")
-include("data.jl")
-include("training.jl")
-include("evaluation.jl")
+    ReservoirComputing, Colors, JSON, Random, OrdinaryDiffEq, StatsBase, LaTeXStrings,
+    FractalDimensions, mesncd
 
 Random.seed!(42)
 
@@ -50,9 +44,9 @@ reversed_labels = [init_labels[init] for init in reversed_inits]
 
 base_color = color_palette[1]
 gray_target = RGB(0.85, 0.85, 0.85)
-non_esn_colors = [blend_colors(base_color, gray_target, i/11) for i in 1:10]
+non_esn_colors = [blend_colors(base_color, gray_target, i / 11) for i in 1:10]
 esn_color = color_palette[2]
-color_map = Dict{String, RGB}()
+color_map = Dict{String,RGB}()
 non_esn_inits = filter(init -> init != "esn", reversed_inits)
 for (i, init) in enumerate(reverse(non_esn_inits))
     color_map[init] = non_esn_colors[i]
@@ -76,7 +70,7 @@ input_data, target_data, test = split_data(
     data, shift, train_len, predict_len
 )
 
-fig = Figure(resolution = (1100, 1300))
+fig = Figure(resolution=(1100, 1300))
 
 mainf = fig[1, 1] = GridLayout()
 mesn1 = mainf[1, 1] = GridLayout()
@@ -104,7 +98,7 @@ for (idx, reg_param) in enumerate(param_range)
     var = 2
     if idx != 5
         ax = Axis(plot_axis[idx][1, 2],
-            rightspinevisible = false,
+            rightspinevisible=false,
             leftspinevisible=false,
             topspinevisible=false,
             bottomspinevisible=false,
@@ -112,10 +106,10 @@ for (idx, reg_param) in enumerate(param_range)
             xticksvisible=false,
             xticklabelsvisible=false,
             yticklabelsvisible=false
-            )
+        )
     else
         ax = Axis(plot_axis[idx][1, 2],
-            rightspinevisible = false,
+            rightspinevisible=false,
             leftspinevisible=false,
             topspinevisible=false,
             yticksvisible=false,
@@ -124,9 +118,9 @@ for (idx, reg_param) in enumerate(param_range)
             #xticklabelsvisible=false,
             yticklabelsvisible=false,
             xlabel=L"\lambda_{max} t",
-            xticklabelsize = 36,
-            xlabelsize = 45,
-            )
+            xticklabelsize=36,
+            xlabelsize=45,
+        )
     end
 
     pred_len = length(output[var, :])
@@ -134,9 +128,9 @@ for (idx, reg_param) in enumerate(param_range)
     lyap_t = largest_lyap .* normal_t
 
     lines!(ax, lyap_t, test[var, :],
-        color = RGB(0.55, 0.55, 0.55), linewidth=6)
+        color=RGB(0.55, 0.55, 0.55), linewidth=6)
     lines!(ax, lyap_t, output[var, :],
-        color = color_map["delay_line"], linewidth=6)
+        color=color_map["delay_line"], linewidth=6)
 
     if idx == 5
         x = [0.0, 4.9, 4.9, 0.0, 0.0]
@@ -150,19 +144,19 @@ for (idx, reg_param) in enumerate(param_range)
             ytickcolor=color_palette[7],
             xtickcolor=color_palette[7],
             yticklabelsvisible=false,
-            xlabel= L"\lambda_{max} t",
-            xticklabelsize = 36,
-            xlabelsize = 45,
-            )
+            xlabel=L"\lambda_{max} t",
+            xticklabelsize=36,
+            xlabelsize=45,
+        )
         lines!(ax, lyap_t[1:400], test[var, 1:400],
-            color = RGB(0.55, 0.55, 0.55), linewidth=6)
+            color=RGB(0.55, 0.55, 0.55), linewidth=6)
         lines!(ax, lyap_t[1:400], output[var, 1:400],
-            color = color_map["delay_line"], linewidth=6)
-        Box(focusf[1, 1], color = :white, strokewidth = 0,)
+            color=color_map["delay_line"], linewidth=6)
+        Box(focusf[1, 1], color=:white, strokewidth=0,)
         Label(focusf[1, 1], "focus",
-            rotation = pi/2,
-            tellheight = false,
-            font = :bold,
+            rotation=pi / 2,
+            tellheight=false,
+            font=:bold,
             fontsize=38,
             color=:white)
     end
@@ -171,23 +165,23 @@ for (idx, reg_param) in enumerate(param_range)
     else
         color_label = color_palette[3]
     end
-    Box(plot_axis[idx][1, 1], color = :white, strokewidth = 0,)
+    Box(plot_axis[idx][1, 1], color=:white, strokewidth=0,)
     Label(plot_axis[idx][1, 1], string(param_range[idx]),
-        rotation = pi/2,
-        tellheight = false,
-        font = :bold,
+        rotation=pi / 2,
+        tellheight=false,
+        font=:bold,
         fontsize=38,
         color=color_label)
     #end
 end
 
 for (label, layout) in zip(["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"],
-        [mesn1, mesn2, mesn3, mesn4, mesn5, focusf])
+    [mesn1, mesn2, mesn3, mesn4, mesn5, focusf])
     Label(layout[1, 1, TopLeft()], label,
-        fontsize = 36,
-        font = :bold,
-        padding = (10,10,10,10),
-        halign = :left)
+        fontsize=36,
+        font=:bold,
+        padding=(10, 10, 10, 10),
+        halign=:left)
 end
 
 fig
@@ -200,4 +194,3 @@ fig
 
 save("test.png", fig, dpi=600)
 save("figures/fig03.eps", fig, dpi=600)
-
